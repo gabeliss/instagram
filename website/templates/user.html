@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 align="center">{{user.username}}</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="image">Choose an image:</label>
+        <input type="file" name="image" id="image" class="form-control-file">
+        <input type="text" name="caption" id="caption" placeholder="Leave a caption" class="form-control">
+    </div>
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Add Post</button>
+    </div>
+</form>
+<br />
+<ul class="list-group list-group-flush" id="posts">
+    {% for post in user.posts %}
+    <div class="card mb-3">
+        <img class="card-img-top" src="data:image/png;base64,{{ post.image }}" alt="Post Image">
+        <p> <b>{{user.username}}:</b>  {{post.caption}}</p>
+        <button type="button" class="close" onClick="deletePost({{ post.id }})">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endfor %}
+</ul>
+
+{% endblock %}
