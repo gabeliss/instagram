@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Post{% endblock %}
+
+{% block content %}
+<br>
+<ul>
+{% for post in posts %}
+    <h2>{{post.id}}</h2>
+{% endfor %}
+</ul>
+<div class="card mb-3">
+    <p>
+        <b><a class="text-dark text-decoration-none" href="{{ url_for('views.user_view', username=current_user.username) }}">{{post_owner.username}}</a></b>
+        <span class="text-secondary float-right">{{ timestamp }}</span>
+    </p>
+    <img class="card-img-top" src="data:image/png;base64,{{ post.image }}" alt="Post Image">
+    <p>3 likes</p>
+    <p> <b>{{post_owner.username}}:</b>  {{post.caption}}</p>
+    <p> <b>user:</b> comment</p>
+    <button type="button" class="close" onClick="deletePost({{ post.id }})">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+{% endblock %}

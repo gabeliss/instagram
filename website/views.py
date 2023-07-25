@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request, flash, jsonify, current_app
+from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
-from werkzeug.utils import secure_filename
 from .models import Note, Post, User
+from .model_helpers import get_timestamp, get_num_posts
 from . import db
-import json, base64, os
+import json, base64
 
 views = Blueprint('views', __name__)
 
@@ -25,7 +25,7 @@ def home():
 
 @views.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
-def user_profile(username):
+def user_view(username):
     user = User.query.filter_by(username=username).first()
     if not user:
         return "User not found", 404
@@ -41,8 +41,36 @@ def user_profile(username):
             db.session.add(new_post)
             db.session.commit()
             flash('Post created!', category='success')
+    
+    num_posts = get_num_posts(user)
+    
+    context = {
+        'current_user': current_user,
+        'user_page': user,
+        'num_posts': num_posts,
+        'name': user.name
+    }
 
-    return render_template("user.html", user=user)
+    return render_template("user.html", **context)
+
+@views.route('/posts/<postid>', methods=['GET', 'POST'])
+@login_required
+def post_view(postid):
+    post = Post.query.filter_by(id=postid).first()
+    if not post:
+        return "Post not found", 404
+    
+    post_owner = User.query.filter_by(id=post.user_id).first()
+    timestamp = get_timestamp(post)
+
+    context = {
+        'current_user': current_user,
+        'post': post,
+        'post_owner': post_owner,
+        'timestamp': timestamp
+    }
+    
+    return render_template("posts.html", **context)
 
 
 @views.route('/delete-note', methods=['POST'])

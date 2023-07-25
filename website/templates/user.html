@@ -2,7 +2,11 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1 align="center">{{user.username}}</h1>
+<h1 align="center">{{current_user.username}}</h1>
+<p>{{num_posts}}</p>
+<p><b>2 following</b></p>
+<p><b>2 followers</b></p>
+<p>{{name}}</p>
 
 <form method="POST" enctype="multipart/form-data">
     <div class="form-group">
@@ -16,10 +20,12 @@
 </form>
 <br />
 <ul class="list-group list-group-flush" id="posts">
-    {% for post in user.posts %}
+    {% for post in current_user.posts %}
     <div class="card mb-3">
-        <img class="card-img-top" src="data:image/png;base64,{{ post.image }}" alt="Post Image">
-        <p> <b>{{user.username}}:</b>  {{post.caption}}</p>
+        <a href="{{ url_for('views.post_view', postid=post.id) }}">
+            <img class="card-img-top" src="data:image/png;base64,{{ post.image }}" alt="Post Image">
+        </a>
+        <p> <b>{{current_user.username}}:</b>  {{post.caption}}</p>
         <button type="button" class="close" onClick="deletePost({{ post.id }})">
             <span aria-hidden="true">&times;</span>
         </button>
